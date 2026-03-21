@@ -1,0 +1,21 @@
+{
+  "name": "@attractor/cli",
+  "version": "0.1.0",
+  "description": "CLI for running Attractor pipelines",
+  "type": "module",
+  "bin": {
+    "attractor": "./dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@attractor/llm": "workspace:*",
+    "@attractor/agent": "workspace:*",
+    "@attractor/engine": "workspace:*"
+  }
+}

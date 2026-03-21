@@ -1,0 +1,23 @@
+{
+  "name": "attractor",
+  "private": true,
+  "description": "DOT-based pipeline runner for multi-stage AI workflows",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint packages/*/src/**/*.ts",
+    "clean": "pnpm -r clean"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  }
+}
