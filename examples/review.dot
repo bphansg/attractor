@@ -1,0 +1,20 @@
+// Human gate workflow: draft -> review_gate -> ship or fix loop
+digraph review_pipeline {
+  goal = "Draft changes and get human approval before shipping"
+
+  start [shape=Mdiamond, label="Start"]
+  draft [shape=box, label="Draft Changes", prompt="Generate the code changes for $goal"]
+  review_gate [shape=hexagon, label="Human Review"]
+  ship [shape=box, label="Ship It", prompt="Apply the approved changes to the codebase"]
+  fix [shape=box, label="Apply Fixes", prompt="Incorporate the reviewer feedback and revise the changes"]
+  done [shape=Msquare, label="Done"]
+
+  start -> draft
+  draft -> review_gate
+
+  review_gate -> ship [label="approved", condition="preferred_label=approved"]
+  review_gate -> fix [label="changes_requested", condition="preferred_label=changes_requested"]
+
+  fix -> review_gate
+  ship -> done
+}

@@ -1,0 +1,19 @@
+// Branching with conditions: plan -> implement -> validate -> gate -> exit or loop
+digraph branching_pipeline {
+  goal = "Implement a feature with validation gating"
+
+  start [shape=Mdiamond, label="Start"]
+  plan [shape=box, label="Plan", prompt="Create an implementation plan for $goal"]
+  implement [shape=box, label="Implement", prompt="Write the code according to the plan"]
+  validate [shape=box, label="Validate", prompt="Run linting, type-checking, and tests against the changes"]
+  gate [shape=diamond, label="Quality Gate"]
+  done [shape=Msquare, label="Done"]
+
+  start -> plan
+  plan -> implement
+  implement -> validate
+  validate -> gate
+
+  gate -> done [label="pass", condition="outcome=success", weight=2]
+  gate -> plan [label="fail", condition="outcome!=success"]
+}

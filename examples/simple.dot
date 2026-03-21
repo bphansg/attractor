@@ -1,0 +1,13 @@
+// Simple linear workflow: start -> run_tests -> report -> exit
+digraph simple_pipeline {
+  goal = "Run tests and generate a report"
+
+  start [shape=Mdiamond, label="Start"]
+  run_tests [shape=box, label="Run Tests", prompt="Execute the test suite and collect results"]
+  report [shape=box, label="Generate Report", prompt="Summarize the test results into a brief report"]
+  done [shape=Msquare, label="Done"]
+
+  start -> run_tests
+  run_tests -> report
+  report -> done
+}
