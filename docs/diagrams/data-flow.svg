@@ -1,188 +1,178 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 580" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2400" width="3840" height="2400" font-family="Segoe UI, system-ui, sans-serif">
   <defs>
     <linearGradient id="bg4" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#0f172a"/>
       <stop offset="100%" stop-color="#1e293b"/>
     </linearGradient>
-    <filter id="sh4" x="-3%" y="-3%" width="106%" height="112%">
-      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.25"/>
-    </filter>
     <marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
     </marker>
   </defs>
 
-  <rect width="900" height="580" rx="16" fill="url(#bg4)"/>
+  <rect width="3840" height="2400" rx="48" fill="url(#bg4)"/>
 
-  <text x="450" y="44" text-anchor="middle" fill="#f1f5f9" font-size="22" font-weight="700">Data Flow &amp; Integration Points</text>
-  <text x="450" y="68" text-anchor="middle" fill="#94a3b8" font-size="13">How data moves through Attractor from input to output</text>
+  <text x="1920" y="170" text-anchor="middle" fill="#f1f5f9" font-size="88" font-weight="700">Data Flow and Integration Points</text>
+  <text x="1920" y="270" text-anchor="middle" fill="#94a3b8" font-size="52">How data moves through Attractor from input to output</text>
 
   <!-- User Input -->
-  <g filter="url(#sh4)">
-    <rect x="30" y="100" width="140" height="60" rx="10" fill="rgba(99,102,241,0.3)" stroke="#6366f1" stroke-width="1.5"/>
-    <text x="100" y="128" text-anchor="middle" fill="#c4b5fd" font-size="12" font-weight="600">User Input</text>
-    <text x="100" y="146" text-anchor="middle" fill="#818cf8" font-size="10">.dot file or NL text</text>
+  <g>
+    <rect x="100" y="400" width="600" height="240" rx="40" fill="#312e81" opacity="0.5" stroke="#6366f1" stroke-width="6"/>
+    <text x="400" y="510" text-anchor="middle" fill="#c4b5fd" font-size="48" font-weight="600">User Input</text>
+    <text x="400" y="580" text-anchor="middle" fill="#818cf8" font-size="40">.dot file or NL text</text>
   </g>
 
-  <line x1="170" y1="130" x2="215" y2="130" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <line x1="700" y1="520" x2="860" y2="520" stroke="#94a3b8" stroke-width="6" marker-end="url(#arr3)"/>
 
   <!-- CLI / HTTP -->
-  <g filter="url(#sh4)">
-    <rect x="220" y="90" width="130" height="80" rx="10" fill="rgba(139,92,246,0.25)" stroke="#8b5cf6" stroke-width="1.5"/>
-    <text x="285" y="118" text-anchor="middle" fill="#c4b5fd" font-size="12" font-weight="600">CLI / HTTP</text>
-    <text x="285" y="136" text-anchor="middle" fill="#a78bfa" font-size="10">parse args</text>
-    <text x="285" y="152" text-anchor="middle" fill="#a78bfa" font-size="10">auth + validate</text>
+  <g>
+    <rect x="880" y="360" width="560" height="320" rx="40" fill="#4c1d95" opacity="0.4" stroke="#8b5cf6" stroke-width="6"/>
+    <text x="1160" y="475" text-anchor="middle" fill="#c4b5fd" font-size="48" font-weight="600">CLI / HTTP</text>
+    <text x="1160" y="545" text-anchor="middle" fill="#a78bfa" font-size="40">parse args</text>
+    <text x="1160" y="610" text-anchor="middle" fill="#a78bfa" font-size="40">auth + validate</text>
   </g>
 
   <!-- Two paths from CLI -->
-  <!-- Path 1: DOT source -->
-  <line x1="350" y1="115" x2="415" y2="115" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr3)"/>
-  <text x="383" y="108" text-anchor="middle" fill="#64748b" font-size="9">.dot</text>
+  <line x1="1440" y1="460" x2="1700" y2="460" stroke="#94a3b8" stroke-width="6" marker-end="url(#arr3)"/>
+  <text x="1570" y="435" text-anchor="middle" fill="#64748b" font-size="36">.dot</text>
 
-  <!-- Path 2: NL description -->
-  <path d="M 350 145 L 383 145 Q 395 145 395 160 L 395 230 L 415 230" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arr3)"/>
-  <text x="383" y="162" fill="#64748b" font-size="9">NL text</text>
+  <path d="M 1440 580 L 1570 580 Q 1600 580 1600 630 L 1600 920 L 1700 920" stroke="#94a3b8" stroke-width="6" fill="none" marker-end="url(#arr3)"/>
+  <text x="1570" y="650" fill="#64748b" font-size="36">NL text</text>
 
   <!-- DOT Parser -->
-  <g filter="url(#sh4)">
-    <rect x="420" y="90" width="140" height="55" rx="10" fill="rgba(59,130,246,0.3)" stroke="#3b82f6" stroke-width="1.5"/>
-    <text x="490" y="115" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="600">DOT Parser</text>
-    <text x="490" y="133" text-anchor="middle" fill="#60a5fa" font-size="10">lexer &#8594; AST</text>
+  <g>
+    <rect x="1720" y="360" width="560" height="220" rx="40" fill="#1e3a5f" opacity="0.5" stroke="#3b82f6" stroke-width="6"/>
+    <text x="2000" y="465" text-anchor="middle" fill="#93c5fd" font-size="48" font-weight="600">DOT Parser</text>
+    <text x="2000" y="535" text-anchor="middle" fill="#60a5fa" font-size="40">lexer &#8594; AST</text>
   </g>
 
   <!-- NL Generator -->
-  <g filter="url(#sh4)">
-    <rect x="420" y="210" width="140" height="55" rx="10" fill="rgba(245,158,11,0.3)" stroke="#f59e0b" stroke-width="1.5"/>
-    <text x="490" y="235" text-anchor="middle" fill="#fcd34d" font-size="12" font-weight="600">NL Generator</text>
-    <text x="490" y="253" text-anchor="middle" fill="#fbbf24" font-size="10">LLM &#8594; DOT + validate</text>
+  <g>
+    <rect x="1720" y="840" width="560" height="220" rx="40" fill="#78350f" opacity="0.5" stroke="#f59e0b" stroke-width="6"/>
+    <text x="2000" y="945" text-anchor="middle" fill="#fcd34d" font-size="48" font-weight="600">NL Generator</text>
+    <text x="2000" y="1015" text-anchor="middle" fill="#fbbf24" font-size="40">LLM &#8594; DOT + validate</text>
   </g>
 
   <!-- Arrow from NL Generator up to Parser -->
-  <path d="M 560 230 L 585 230 Q 600 230 600 215 L 600 117 L 565 117" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr3)"/>
-  <text x="615" y="175" fill="#fbbf24" font-size="9" transform="rotate(-90 615 175)">generated .dot</text>
+  <path d="M 2280 920 L 2400 920 Q 2440 920 2440 860 L 2440 470 L 2290 470" stroke="#f59e0b" stroke-width="6" fill="none" stroke-dasharray="20,12" marker-end="url(#arr3)"/>
+  <text x="2500" y="700" fill="#fbbf24" font-size="36" transform="rotate(-90 2500 700)">generated .dot</text>
 
   <!-- Arrow Parser -> Graph Builder -->
-  <line x1="560" y1="117" x2="640" y2="117" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <line x1="2280" y1="470" x2="2600" y2="470" stroke="#94a3b8" stroke-width="6" marker-end="url(#arr3)"/>
 
   <!-- Graph Builder + Validator -->
-  <g filter="url(#sh4)">
-    <rect x="645" y="90" width="220" height="55" rx="10" fill="rgba(20,184,166,0.3)" stroke="#14b8a6" stroke-width="1.5"/>
-    <text x="755" y="115" text-anchor="middle" fill="#5eead4" font-size="12" font-weight="600">Graph Builder + Validator</text>
-    <text x="755" y="133" text-anchor="middle" fill="#2dd4bf" font-size="10">AST &#8594; Graph &#8594; 13 lint rules</text>
+  <g>
+    <rect x="2620" y="360" width="1080" height="220" rx="40" fill="#134e4a" opacity="0.5" stroke="#14b8a6" stroke-width="6"/>
+    <text x="3160" y="465" text-anchor="middle" fill="#5eead4" font-size="48" font-weight="600">Graph Builder + Validator</text>
+    <text x="3160" y="535" text-anchor="middle" fill="#2dd4bf" font-size="40">AST &#8594; Graph &#8594; 13 lint rules</text>
   </g>
 
   <!-- Arrow down to Transforms -->
-  <line x1="755" y1="145" x2="755" y2="180" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <line x1="3160" y1="580" x2="3160" y2="720" stroke="#94a3b8" stroke-width="6" marker-end="url(#arr3)"/>
 
   <!-- Transforms -->
-  <g filter="url(#sh4)">
-    <rect x="645" y="185" width="220" height="50" rx="10" fill="rgba(99,102,241,0.2)" stroke="#6366f1" stroke-width="1"/>
-    <text x="755" y="210" text-anchor="middle" fill="#a5b4fc" font-size="12" font-weight="600">Transforms</text>
-    <text x="755" y="226" text-anchor="middle" fill="#818cf8" font-size="10">$goal expansion | stylesheet | custom</text>
+  <g>
+    <rect x="2620" y="740" width="1080" height="200" rx="40" fill="#312e81" opacity="0.3" stroke="#6366f1" stroke-width="4"/>
+    <text x="3160" y="835" text-anchor="middle" fill="#a5b4fc" font-size="48" font-weight="600">Transforms</text>
+    <text x="3160" y="900" text-anchor="middle" fill="#818cf8" font-size="40">$goal expansion | stylesheet | custom</text>
   </g>
 
   <!-- Arrow down to Runner -->
-  <line x1="755" y1="235" x2="755" y2="270" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <line x1="3160" y1="940" x2="3160" y2="1080" stroke="#94a3b8" stroke-width="6" marker-end="url(#arr3)"/>
 
   <!-- Runner (big box) -->
-  <g filter="url(#sh4)">
-    <rect x="370" y="275" width="500" height="130" rx="12" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="1.5"/>
-    <text x="620" y="300" text-anchor="middle" fill="#fbbf24" font-size="14" font-weight="700">Execution Runner</text>
+  <g>
+    <rect x="1480" y="1100" width="2220" height="520" rx="48" fill="#78350f" opacity="0.15" stroke="#f59e0b" stroke-width="6"/>
+    <text x="2590" y="1195" text-anchor="middle" fill="#fbbf24" font-size="56" font-weight="700">Execution Runner</text>
 
-    <!-- Sub items inside runner -->
-    <rect x="390" y="312" width="110" height="40" rx="6" fill="rgba(59,130,246,0.3)" stroke="#3b82f6" stroke-width="1"/>
-    <text x="445" y="336" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="600">Handler Dispatch</text>
+    <rect x="1540" y="1240" width="440" height="160" rx="24" fill="#1e3a5f" opacity="0.5" stroke="#3b82f6" stroke-width="4"/>
+    <text x="1760" y="1335" text-anchor="middle" fill="#93c5fd" font-size="40" font-weight="600">Handler Dispatch</text>
 
-    <rect x="520" y="312" width="110" height="40" rx="6" fill="rgba(20,184,166,0.3)" stroke="#14b8a6" stroke-width="1"/>
-    <text x="575" y="336" text-anchor="middle" fill="#5eead4" font-size="10" font-weight="600">Edge Selection</text>
+    <rect x="2020" y="1240" width="440" height="160" rx="24" fill="#134e4a" opacity="0.5" stroke="#14b8a6" stroke-width="4"/>
+    <text x="2240" y="1335" text-anchor="middle" fill="#5eead4" font-size="40" font-weight="600">Edge Selection</text>
 
-    <rect x="650" y="312" width="100" height="40" rx="6" fill="rgba(139,92,246,0.3)" stroke="#8b5cf6" stroke-width="1"/>
-    <text x="700" y="336" text-anchor="middle" fill="#c4b5fd" font-size="10" font-weight="600">Retry Logic</text>
+    <rect x="2500" y="1240" width="400" height="160" rx="24" fill="#4c1d95" opacity="0.4" stroke="#8b5cf6" stroke-width="4"/>
+    <text x="2700" y="1335" text-anchor="middle" fill="#c4b5fd" font-size="40" font-weight="600">Retry Logic</text>
 
-    <rect x="770" y="312" width="80" height="40" rx="6" fill="rgba(236,72,153,0.3)" stroke="#ec4899" stroke-width="1"/>
-    <text x="810" y="336" text-anchor="middle" fill="#f9a8d4" font-size="10" font-weight="600">Goal Gate</text>
+    <rect x="2940" y="1240" width="360" height="160" rx="24" fill="#831843" opacity="0.4" stroke="#ec4899" stroke-width="4"/>
+    <text x="3120" y="1335" text-anchor="middle" fill="#f9a8d4" font-size="40" font-weight="600">Goal Gate</text>
 
-    <!-- Context + Checkpoint -->
-    <rect x="390" y="362" width="160" height="32" rx="6" fill="rgba(139,92,246,0.2)" stroke="#8b5cf6" stroke-width="1"/>
-    <text x="470" y="383" text-anchor="middle" fill="#c4b5fd" font-size="10">Context (KV) + Checkpoint</text>
+    <rect x="1540" y="1430" width="640" height="130" rx="24" fill="#4c1d95" opacity="0.3" stroke="#8b5cf6" stroke-width="4"/>
+    <text x="1860" y="1510" text-anchor="middle" fill="#c4b5fd" font-size="40">Context (KV) + Checkpoint</text>
 
-    <rect x="570" y="362" width="120" height="32" rx="6" fill="rgba(239,68,68,0.2)" stroke="#ef4444" stroke-width="1"/>
-    <text x="630" y="383" text-anchor="middle" fill="#fca5a5" font-size="10">Event Emitter</text>
+    <rect x="2220" y="1430" width="500" height="130" rx="24" fill="#7f1d1d" opacity="0.3" stroke="#ef4444" stroke-width="4"/>
+    <text x="2470" y="1510" text-anchor="middle" fill="#fca5a5" font-size="40">Event Emitter</text>
 
-    <rect x="710" y="362" width="140" height="32" rx="6" fill="rgba(99,102,241,0.2)" stroke="#6366f1" stroke-width="1"/>
-    <text x="780" y="383" text-anchor="middle" fill="#a5b4fc" font-size="10">Artifact Store</text>
+    <rect x="2760" y="1430" width="560" height="130" rx="24" fill="#312e81" opacity="0.3" stroke="#6366f1" stroke-width="4"/>
+    <text x="3040" y="1510" text-anchor="middle" fill="#a5b4fc" font-size="40">Artifact Store</text>
   </g>
 
   <!-- External integrations on the left -->
-  <!-- LLM Providers -->
-  <g filter="url(#sh4)">
-    <rect x="30" y="285" width="160" height="110" rx="10" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1.5"/>
-    <text x="110" y="310" text-anchor="middle" fill="#6ee7b7" font-size="12" font-weight="700">LLM Providers</text>
-    <rect x="48" y="322" width="46" height="20" rx="4" fill="rgba(16,185,129,0.3)"/>
-    <text x="71" y="336" text-anchor="middle" fill="#a7f3d0" font-size="9">OpenAI</text>
-    <rect x="100" y="322" width="72" height="20" rx="4" fill="rgba(16,185,129,0.3)"/>
-    <text x="136" y="336" text-anchor="middle" fill="#a7f3d0" font-size="9">Anthropic</text>
-    <rect x="48" y="348" width="55" height="20" rx="4" fill="rgba(16,185,129,0.3)"/>
-    <text x="75" y="362" text-anchor="middle" fill="#a7f3d0" font-size="9">Gemini</text>
-    <rect x="110" y="348" width="62" height="20" rx="4" fill="rgba(16,185,129,0.3)"/>
-    <text x="141" y="362" text-anchor="middle" fill="#a7f3d0" font-size="9">custom</text>
-    <text x="110" y="386" text-anchor="middle" fill="#6ee7b7" font-size="9">via @attractor/llm</text>
+  <g>
+    <rect x="100" y="1140" width="700" height="440" rx="40" fill="#064e3b" opacity="0.4" stroke="#10b981" stroke-width="6"/>
+    <text x="450" y="1250" text-anchor="middle" fill="#6ee7b7" font-size="48" font-weight="700">LLM Providers</text>
+    <rect x="160" y="1290" width="200" height="80" rx="16" fill="#065f46" opacity="0.6"/>
+    <text x="260" y="1340" text-anchor="middle" fill="#a7f3d0" font-size="36">OpenAI</text>
+    <rect x="380" y="1290" width="280" height="80" rx="16" fill="#065f46" opacity="0.6"/>
+    <text x="520" y="1340" text-anchor="middle" fill="#a7f3d0" font-size="36">Anthropic</text>
+    <rect x="160" y="1390" width="220" height="80" rx="16" fill="#065f46" opacity="0.6"/>
+    <text x="270" y="1440" text-anchor="middle" fill="#a7f3d0" font-size="36">Gemini</text>
+    <rect x="400" y="1390" width="260" height="80" rx="16" fill="#065f46" opacity="0.6"/>
+    <text x="530" y="1440" text-anchor="middle" fill="#a7f3d0" font-size="36">custom</text>
+    <text x="450" y="1540" text-anchor="middle" fill="#6ee7b7" font-size="36">via @attractor/llm</text>
   </g>
 
-  <!-- Arrow LLM <-> Runner -->
-  <line x1="190" y1="340" x2="365" y2="340" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr3)"/>
-  <text x="275" y="334" text-anchor="middle" fill="#6ee7b7" font-size="9">prompt / response</text>
+  <line x1="800" y1="1360" x2="1470" y2="1360" stroke="#10b981" stroke-width="6" marker-end="url(#arr3)"/>
+  <text x="1135" y="1330" text-anchor="middle" fill="#6ee7b7" font-size="36">prompt / response</text>
 
   <!-- Human / Interviewer -->
-  <g filter="url(#sh4)">
-    <rect x="30" y="420" width="160" height="65" rx="10" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="1.5"/>
-    <text x="110" y="448" text-anchor="middle" fill="#fcd34d" font-size="12" font-weight="700">Human</text>
-    <text x="110" y="468" text-anchor="middle" fill="#fbbf24" font-size="10">console | HTTP | auto</text>
+  <g>
+    <rect x="100" y="1680" width="700" height="260" rx="40" fill="#78350f" opacity="0.4" stroke="#f59e0b" stroke-width="6"/>
+    <text x="450" y="1800" text-anchor="middle" fill="#fcd34d" font-size="48" font-weight="700">Human</text>
+    <text x="450" y="1870" text-anchor="middle" fill="#fbbf24" font-size="40">console | HTTP | auto</text>
   </g>
 
-  <line x1="190" y1="452" x2="365" y2="390" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr3)"/>
-  <text x="260" y="428" fill="#fbbf24" font-size="9">question / answer</text>
+  <line x1="800" y1="1810" x2="1470" y2="1560" stroke="#f59e0b" stroke-width="6" marker-end="url(#arr3)"/>
+  <text x="1080" y="1715" fill="#fbbf24" font-size="36">question / answer</text>
 
   <!-- Outputs -->
-  <line x1="620" y1="405" x2="620" y2="445" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <line x1="2590" y1="1620" x2="2590" y2="1780" stroke="#94a3b8" stroke-width="6" marker-end="url(#arr3)"/>
 
-  <!-- Output row -->
-  <g filter="url(#sh4)">
-    <rect x="370" y="450" width="500" height="60" rx="10" fill="rgba(99,102,241,0.15)" stroke="#6366f1" stroke-width="1"/>
-    <text x="620" y="475" text-anchor="middle" fill="#c4b5fd" font-size="13" font-weight="700">Outputs</text>
+  <g>
+    <rect x="1480" y="1800" width="2220" height="240" rx="40" fill="#312e81" opacity="0.2" stroke="#6366f1" stroke-width="4"/>
+    <text x="2590" y="1900" text-anchor="middle" fill="#c4b5fd" font-size="52" font-weight="700">Outputs</text>
 
-    <rect x="390" y="485" width="70" height="18" rx="4" fill="rgba(59,130,246,0.3)"/>
-    <text x="425" y="498" text-anchor="middle" fill="#93c5fd" font-size="9">Logs</text>
+    <rect x="1540" y="1940" width="280" height="72" rx="16" fill="#1e3a5f" opacity="0.6"/>
+    <text x="1680" y="1986" text-anchor="middle" fill="#93c5fd" font-size="36">Logs</text>
 
-    <rect x="470" y="485" width="80" height="18" rx="4" fill="rgba(20,184,166,0.3)"/>
-    <text x="510" y="498" text-anchor="middle" fill="#5eead4" font-size="9">Checkpoint</text>
+    <rect x="1860" y="1940" width="320" height="72" rx="16" fill="#134e4a" opacity="0.6"/>
+    <text x="2020" y="1986" text-anchor="middle" fill="#5eead4" font-size="36">Checkpoint</text>
 
-    <rect x="560" y="485" width="70" height="18" rx="4" fill="rgba(245,158,11,0.3)"/>
-    <text x="595" y="498" text-anchor="middle" fill="#fcd34d" font-size="9">Events</text>
+    <rect x="2220" y="1940" width="280" height="72" rx="16" fill="#78350f" opacity="0.6"/>
+    <text x="2360" y="1986" text-anchor="middle" fill="#fcd34d" font-size="36">Events</text>
 
-    <rect x="640" y="485" width="70" height="18" rx="4" fill="rgba(239,68,68,0.3)"/>
-    <text x="675" y="498" text-anchor="middle" fill="#fca5a5" font-size="9">Artifacts</text>
+    <rect x="2540" y="1940" width="280" height="72" rx="16" fill="#7f1d1d" opacity="0.6"/>
+    <text x="2680" y="1986" text-anchor="middle" fill="#fca5a5" font-size="36">Artifacts</text>
 
-    <rect x="720" y="485" width="65" height="18" rx="4" fill="rgba(139,92,246,0.3)"/>
-    <text x="752" y="498" text-anchor="middle" fill="#c4b5fd" font-size="9">Outcome</text>
+    <rect x="2860" y="1940" width="280" height="72" rx="16" fill="#4c1d95" opacity="0.5"/>
+    <text x="3000" y="1986" text-anchor="middle" fill="#c4b5fd" font-size="36">Outcome</text>
 
-    <rect x="795" y="485" width="55" height="18" rx="4" fill="rgba(16,185,129,0.3)"/>
-    <text x="822" y="498" text-anchor="middle" fill="#6ee7b7" font-size="9">SSE</text>
+    <rect x="3180" y="1940" width="240" height="72" rx="16" fill="#065f46" opacity="0.6"/>
+    <text x="3300" y="1986" text-anchor="middle" fill="#6ee7b7" font-size="36">SSE</text>
   </g>
 
   <!-- File system -->
-  <g filter="url(#sh4)">
-    <rect x="370" y="530" width="220" height="40" rx="8" fill="rgba(148,163,184,0.1)" stroke="#475569" stroke-width="1"/>
-    <text x="480" y="554" text-anchor="middle" fill="#94a3b8" font-size="11">Filesystem (logs, checkpoints, artifacts)</text>
+  <g>
+    <rect x="1480" y="2120" width="960" height="160" rx="32" fill="#1e293b" opacity="0.6" stroke="#475569" stroke-width="4"/>
+    <text x="1960" y="2218" text-anchor="middle" fill="#94a3b8" font-size="44">Filesystem (logs, checkpoints, artifacts)</text>
   </g>
 
-  <line x1="480" y1="510" x2="480" y2="527" stroke="#64748b" stroke-width="1" marker-end="url(#arr3)"/>
+  <line x1="1960" y1="2040" x2="1960" y2="2112" stroke="#64748b" stroke-width="4" marker-end="url(#arr3)"/>
 
   <!-- SSE / HTTP clients -->
-  <g filter="url(#sh4)">
-    <rect x="650" y="530" width="220" height="40" rx="8" fill="rgba(148,163,184,0.1)" stroke="#475569" stroke-width="1"/>
-    <text x="760" y="554" text-anchor="middle" fill="#94a3b8" font-size="11">HTTP Clients (SSE stream, REST API)</text>
+  <g>
+    <rect x="2740" y="2120" width="960" height="160" rx="32" fill="#1e293b" opacity="0.6" stroke="#475569" stroke-width="4"/>
+    <text x="3220" y="2218" text-anchor="middle" fill="#94a3b8" font-size="44">HTTP Clients (SSE stream, REST API)</text>
   </g>
 
-  <line x1="760" y1="510" x2="760" y2="527" stroke="#64748b" stroke-width="1" marker-end="url(#arr3)"/>
+  <line x1="3220" y1="2040" x2="3220" y2="2112" stroke="#64748b" stroke-width="4" marker-end="url(#arr3)"/>
 </svg>
