@@ -1,0 +1,15 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "packages/llm",
+    "packages/agent",
+    "packages/engine"
+  ],
+  "entryPointStrategy": "packages",
+  "out": "docs/api",
+  "name": "Attractor API Documentation",
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "skipErrorChecking": true
+}

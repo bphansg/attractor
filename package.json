@@ -13,11 +13,13 @@
     "test:watch": "vitest",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint packages/*/src/**/*.ts",
-    "clean": "pnpm -r clean"
+    "clean": "pnpm -r clean",
+    "docs": "typedoc"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
     "tsup": "^8.5.1",
+    "typedoc": "^0.28.17",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0"
   }
