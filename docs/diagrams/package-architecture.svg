@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 680" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="cli-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="engine-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="agent-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="llm-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="116%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="680" rx="16" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="450" y="48" text-anchor="middle" fill="#f1f5f9" font-size="22" font-weight="700" letter-spacing="0.5">Attractor Package Architecture</text>
+  <text x="450" y="72" text-anchor="middle" fill="#94a3b8" font-size="13">pnpm monorepo with layered dependencies</text>
+
+  <!-- CLI Package -->
+  <g filter="url(#shadow)">
+    <rect x="250" y="95" width="400" height="100" rx="12" fill="url(#cli-grad)" opacity="0.95"/>
+    <text x="290" y="130" fill="#fff" font-size="18" font-weight="700">@attractor/cli</text>
+    <text x="290" y="152" fill="#e0e7ff" font-size="12">Command-line interface</text>
+    <text x="290" y="174" fill="#c4b5fd" font-size="11">run | validate | generate | serve | visualize</text>
+    <rect x="560" y="110" width="70" height="28" rx="14" fill="rgba(255,255,255,0.15)"/>
+    <text x="595" y="129" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">CLI</text>
+  </g>
+
+  <!-- Arrow CLI -> Engine -->
+  <line x1="450" y1="195" x2="450" y2="235" stroke="#64748b" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="445,232 450,244 455,232" fill="#64748b"/>
+
+  <!-- Engine Package -->
+  <g filter="url(#shadow)">
+    <rect x="100" y="245" width="700" height="140" rx="12" fill="url(#engine-grad)" opacity="0.95"/>
+    <text x="150" y="280" fill="#fff" font-size="18" font-weight="700">@attractor/engine</text>
+    <text x="150" y="302" fill="#bfdbfe" font-size="12">Pipeline engine &mdash; DOT-based workflow orchestration</text>
+
+    <!-- Engine sub-modules -->
+    <g>
+      <rect x="130" y="318" width="95" height="48" rx="8" fill="rgba(255,255,255,0.12)"/>
+      <text x="177" y="339" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="600">DOT Parser</text>
+      <text x="177" y="354" text-anchor="middle" fill="#93c5fd" font-size="9">lexer + AST</text>
+    </g>
+    <g>
+      <rect x="237" y="318" width="95" height="48" rx="8" fill="rgba(255,255,255,0.12)"/>
+      <text x="284" y="339" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="600">Graph</text>
+      <text x="284" y="354" text-anchor="middle" fill="#93c5fd" font-size="9">builder + model</text>
+    </g>
+    <g>
+      <rect x="344" y="318" width="95" height="48" rx="8" fill="rgba(255,255,255,0.12)"/>
+      <text x="391" y="339" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="600">Runner</text>
+      <text x="391" y="354" text-anchor="middle" fill="#93c5fd" font-size="9">execution loop</text>
+    </g>
+    <g>
+      <rect x="451" y="318" width="95" height="48" rx="8" fill="rgba(255,255,255,0.12)"/>
+      <text x="498" y="339" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="600">Handlers</text>
+      <text x="498" y="354" text-anchor="middle" fill="#93c5fd" font-size="9">9 node types</text>
+    </g>
+    <g>
+      <rect x="558" y="318" width="95" height="48" rx="8" fill="rgba(255,255,255,0.12)"/>
+      <text x="605" y="339" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="600">HTTP Server</text>
+      <text x="605" y="354" text-anchor="middle" fill="#93c5fd" font-size="9">REST + SSE</text>
+    </g>
+    <g>
+      <rect x="665" y="318" width="105" height="48" rx="8" fill="rgba(255,255,255,0.12)"/>
+      <text x="717" y="339" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="600">Conditions</text>
+      <text x="717" y="354" text-anchor="middle" fill="#93c5fd" font-size="9">edge routing</text>
+    </g>
+  </g>
+
+  <!-- Arrow Engine -> Agent -->
+  <line x1="350" y1="385" x2="350" y2="425" stroke="#64748b" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="345,422 350,434 355,422" fill="#64748b"/>
+
+  <!-- Arrow Engine -> LLM (direct) -->
+  <line x1="550" y1="385" x2="550" y2="525" stroke="#64748b" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="545,522 550,534 555,522" fill="#64748b"/>
+
+  <!-- Agent Package -->
+  <g filter="url(#shadow)">
+    <rect x="100" y="435" width="400" height="100" rx="12" fill="url(#agent-grad)" opacity="0.95"/>
+    <text x="150" y="472" fill="#fff" font-size="18" font-weight="700">@attractor/agent</text>
+    <text x="150" y="494" fill="#d1fae5" font-size="12">Coding agent loop with provider-aligned tools</text>
+    <text x="150" y="516" fill="#a7f3d0" font-size="11">session | tools | profiles | env | subagents</text>
+  </g>
+
+  <!-- Arrow Agent -> LLM -->
+  <line x1="350" y1="535" x2="450" y2="565" stroke="#64748b" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="445,561 455,567 448,555" fill="#64748b"/>
+
+  <!-- LLM Package -->
+  <g filter="url(#shadow)">
+    <rect x="250" y="565" width="400" height="100" rx="12" fill="url(#llm-grad)" opacity="0.95"/>
+    <text x="290" y="602" fill="#fff" font-size="18" font-weight="700">@attractor/llm</text>
+    <text x="290" y="624" fill="#fef3c7" font-size="12">Unified multi-provider LLM client</text>
+    <text x="290" y="646" fill="#fde68a" font-size="11">OpenAI | Anthropic | Gemini | middleware | retry</text>
+  </g>
+
+  <!-- Provider icons at bottom -->
+  <g transform="translate(450, 668)">
+    <circle cx="-60" cy="0" r="4" fill="#10b981"/>
+    <text x="-50" y="4" fill="#94a3b8" font-size="10">OpenAI</text>
+    <circle cx="20" cy="0" r="4" fill="#f59e0b"/>
+    <text x="30" y="4" fill="#94a3b8" font-size="10">Anthropic</text>
+    <circle cx="110" cy="0" r="4" fill="#3b82f6"/>
+    <text x="120" y="4" fill="#94a3b8" font-size="10">Gemini</text>
+  </g>
+</svg>

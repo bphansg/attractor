@@ -414,17 +414,40 @@ await session.close();
 
 Attractor is built as four packages, each usable independently:
 
-```
-@attractor/cli       Command-line tool
-       |
-@attractor/engine    Pipeline engine (DOT parser, execution, node handlers)
-       |
-@attractor/agent     Coding agent loop (tools, profiles, session management)
-       |
-@attractor/llm       Unified LLM client (OpenAI, Anthropic, Gemini)
-```
+<p align="center">
+  <img src="docs/diagrams/package-architecture.svg" alt="Package Architecture" width="800"/>
+</p>
+
+| Package | Purpose |
+|---------|---------|
+| `@attractor/cli` | Command-line tool |
+| `@attractor/engine` | Pipeline engine (DOT parser, execution, 9 node handlers, HTTP server) |
+| `@attractor/agent` | Coding agent loop (tools, profiles, session management) |
+| `@attractor/llm` | Unified LLM client (OpenAI, Anthropic, Gemini) |
 
 You can use just the LLM client, just the agent loop, or the full pipeline engine depending on what you need.
+
+### How the Engine Works
+
+<p align="center">
+  <img src="docs/diagrams/engine-internals.svg" alt="Engine Internals" width="850"/>
+</p>
+
+The engine runs each pipeline through 6 phases: **PARSE** (DOT text to AST) → **BUILD** (AST to graph model) → **VALIDATE** (13 lint rules) → **TRANSFORM** (variable expansion, stylesheets) → **EXECUTE** (walk graph, dispatch handlers, select edges) → **FINALIZE** (write logs, checkpoint).
+
+### Pipeline Execution Flow
+
+<p align="center">
+  <img src="docs/diagrams/pipeline-flow.svg" alt="Pipeline Execution Flow" width="800"/>
+</p>
+
+### Data Flow
+
+<p align="center">
+  <img src="docs/diagrams/data-flow.svg" alt="Data Flow" width="800"/>
+</p>
+
+For detailed architecture documentation, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Setting Up AI Providers
 
