@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 export interface ArtifactInfo {
   id: string;
@@ -30,7 +30,14 @@ export class ArtifactStore {
   }
 
   private artifactPath(id: string): string {
-    return join(this.artifactDir(), `${id}.json`);
+    // Sanitize id to prevent path traversal
+    const safeId = id.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+    const dir = this.artifactDir();
+    const filePath = resolve(join(dir, `${safeId}.json`));
+    if (!filePath.startsWith(resolve(dir) + '/')) {
+      throw new Error(`Invalid artifact ID: ${id}`);
+    }
+    return filePath;
   }
 
   private computeSize(data: unknown): number {

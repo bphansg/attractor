@@ -7,6 +7,7 @@ import { createOutcome } from '../state/outcome.js';
 import type { Handler } from './interface.js';
 
 const DEFAULT_TIMEOUT_MS = 60_000;
+const MAX_TIMEOUT_MS = 300_000; // 5 minutes max
 
 export class ToolHandler implements Handler {
   async execute(node: GraphNode, _context: Context, _graph: Graph, _logsRoot: string): Promise<Outcome> {
@@ -20,9 +21,10 @@ export class ToolHandler implements Handler {
       });
     }
 
-    // 2. Get timeout
+    // 2. Get timeout (capped to prevent abuse)
     const rawTimeout = node.attrs['tool_timeout'];
-    const timeoutMs = rawTimeout ? parseInt(rawTimeout, 10) : DEFAULT_TIMEOUT_MS;
+    const parsedTimeout = rawTimeout ? parseInt(rawTimeout, 10) : DEFAULT_TIMEOUT_MS;
+    const timeoutMs = Math.min(Math.max(parsedTimeout, 1000), MAX_TIMEOUT_MS);
 
     // 3. Execute shell command
     try {

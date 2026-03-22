@@ -126,12 +126,26 @@ export class LocalExecutionEnvironment implements ExecutionEnvironment {
       let stderr = '';
       let timedOut = false;
       let settled = false;
+      const MAX_BUFFER = 5 * 1024 * 1024; // 5MB max output buffer
+      let bufferExceeded = false;
 
       child.stdout?.on('data', (data: Buffer) => {
+        if (bufferExceeded) return;
         stdout += data.toString();
+        if (stdout.length + stderr.length > MAX_BUFFER) {
+          bufferExceeded = true;
+          stdout += '\n[output truncated: exceeded 5MB limit]';
+          try { process.kill(-child.pid!, 'SIGTERM'); } catch { /* already exited */ }
+        }
       });
       child.stderr?.on('data', (data: Buffer) => {
+        if (bufferExceeded) return;
         stderr += data.toString();
+        if (stdout.length + stderr.length > MAX_BUFFER) {
+          bufferExceeded = true;
+          stderr += '\n[output truncated: exceeded 5MB limit]';
+          try { process.kill(-child.pid!, 'SIGTERM'); } catch { /* already exited */ }
+        }
       });
 
       const timer = setTimeout(() => {
@@ -271,7 +285,13 @@ export class LocalExecutionEnvironment implements ExecutionEnvironment {
   // ---------------------------------------------------------------------------
 
   private resolve(p: string): string {
-    return nodePath.isAbsolute(p) ? p : nodePath.resolve(this.cwd, p);
+    const resolved = nodePath.isAbsolute(p) ? nodePath.resolve(p) : nodePath.resolve(this.cwd, p);
+    // Enforce path containment within the working directory
+    const normalizedCwd = nodePath.resolve(this.cwd);
+    if (!resolved.startsWith(normalizedCwd + '/') && resolved !== normalizedCwd) {
+      throw new Error(`Path access denied: ${p} is outside the project directory`);
+    }
+    return resolved;
   }
 
   private async commandExists(cmd: string): Promise<boolean> {

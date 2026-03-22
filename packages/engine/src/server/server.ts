@@ -25,6 +25,16 @@ export interface ServerConfig {
   port?: number;
   host?: string;
   logsRoot?: string;
+  /** API key required for all mutating endpoints. If set, requests must include Authorization: Bearer <key>. */
+  apiKey?: string;
+  /** Maximum concurrent pipeline runs. Defaults to 20. */
+  maxConcurrentRuns?: number;
+  /** Maximum request body size in bytes. Defaults to 1MB. */
+  maxBodySize?: number;
+  /** Allowed CORS origins. Defaults to none (no CORS headers). Set to ['*'] for open access. */
+  allowedOrigins?: string[];
+  /** Enable tool (shell command) nodes in pipelines. Defaults to false for security. */
+  enableToolNodes?: boolean;
 }
 
 // ── Echo backend ─────────────────────────────────────────────────────
@@ -37,10 +47,19 @@ class EchoBackend implements CodergenBackend {
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
-function readBody(req: IncomingMessage): Promise<string> {
+function readBody(req: IncomingMessage, maxSize: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
-    req.on('data', (chunk: Buffer) => chunks.push(chunk));
+    let totalSize = 0;
+    req.on('data', (chunk: Buffer) => {
+      totalSize += chunk.length;
+      if (totalSize > maxSize) {
+        req.destroy();
+        reject(new Error('Request body too large'));
+        return;
+      }
+      chunks.push(chunk);
+    });
     req.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
     req.on('error', reject);
   });
@@ -55,10 +74,18 @@ function json(res: ServerResponse, status: number, body: unknown): void {
   res.end(payload);
 }
 
-function setCorsHeaders(res: ServerResponse): void {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+function setCorsHeaders(res: ServerResponse, allowedOrigins: string[], origin?: string): void {
+  if (allowedOrigins.length === 0) return;
+  if (allowedOrigins.includes('*')) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  } else if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  } else {
+    return; // No CORS headers for unknown origins
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
 // ── Route matching ───────────────────────────────────────────────────
@@ -88,15 +115,60 @@ function matchRoute(pattern: string, path: string): RouteMatch | null {
 
 export function createServer(config: ServerConfig = {}) {
   const port = config.port ?? 3000;
-  const host = config.host ?? '0.0.0.0';
+  const host = config.host ?? '127.0.0.1';
   const logsRoot = config.logsRoot ?? join(tmpdir(), 'attractor-server-logs');
+  const apiKey = config.apiKey;
+  const maxConcurrentRuns = config.maxConcurrentRuns ?? 20;
+  const maxBodySize = config.maxBodySize ?? 1_048_576; // 1MB
+  const allowedOrigins = config.allowedOrigins ?? [];
+  const enableToolNodes = config.enableToolNodes ?? false;
 
   const runs = new Map<string, PipelineRun>();
+  let completedRunCount = 0;
+  const MAX_COMPLETED_RUNS = 100;
+
+  function checkAuth(req: IncomingMessage, res: ServerResponse): boolean {
+    if (!apiKey) return true;
+    const authHeader = req.headers['authorization'];
+    if (authHeader === `Bearer ${apiKey}`) return true;
+    json(res, 401, { error: 'Unauthorized: missing or invalid Authorization header' });
+    return false;
+  }
+
+  function activeRunCount(): number {
+    let count = 0;
+    for (const r of runs.values()) {
+      if (r.status === 'running' || r.status === 'waiting_human' || r.status === 'pending') count++;
+    }
+    return count;
+  }
+
+  function evictCompletedRuns(): void {
+    if (completedRunCount <= MAX_COMPLETED_RUNS) return;
+    const toRemove: string[] = [];
+    for (const [id, r] of runs) {
+      if (r.status === 'completed' || r.status === 'failed' || r.status === 'aborted') {
+        toRemove.push(id);
+      }
+      if (toRemove.length >= completedRunCount - MAX_COMPLETED_RUNS) break;
+    }
+    for (const id of toRemove) {
+      runs.delete(id);
+      completedRunCount--;
+    }
+  }
 
   // ── Route handlers ───────────────────────────────────────────────
 
   async function handleRunPipeline(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const body = await readBody(req);
+    if (!checkAuth(req, res)) return;
+
+    if (activeRunCount() >= maxConcurrentRuns) {
+      json(res, 429, { error: `Too many concurrent runs (max: ${maxConcurrentRuns})` });
+      return;
+    }
+
+    const body = await readBody(req, maxBodySize);
     let parsed: { dot?: string; autoApprove?: boolean };
     try {
       parsed = JSON.parse(body);
@@ -167,6 +239,17 @@ export function createServer(config: ServerConfig = {}) {
     registry.register('wait-human', new WaitHumanHandler(interviewer));
     registry.register('wait.human', new WaitHumanHandler(interviewer));
 
+    // Block tool nodes unless explicitly enabled
+    if (!enableToolNodes) {
+      for (const node of graph.nodes.values()) {
+        if (node.nodeType === 'tool' || node.shape === 'parallelogram') {
+          json(res, 403, { error: 'Tool (shell command) nodes are disabled on this server. Set enableToolNodes to allow them.' });
+          runs.delete(id);
+          return;
+        }
+      }
+    }
+
     // Return immediately, run pipeline in background
     json(res, 200, { id, status: 'running' });
 
@@ -178,7 +261,10 @@ export function createServer(config: ServerConfig = {}) {
       codergenBackend: backend,
       onEvent: (event: PipelineEvent) => {
         const eventData = { ...event } as Record<string, unknown>;
-        pipelineRun.events.push(eventData);
+        // Cap stored events to prevent unbounded memory growth
+        if (pipelineRun.events.length < 10_000) {
+          pipelineRun.events.push(eventData);
+        }
 
         const ssePayload = JSON.stringify(eventData);
         for (const listener of pipelineRun.sseListeners) {
@@ -188,6 +274,8 @@ export function createServer(config: ServerConfig = {}) {
     }).then((outcome) => {
       pipelineRun.status = 'completed';
       pipelineRun.outcome = { ...outcome };
+      completedRunCount++;
+      evictCompletedRuns();
 
       const donePayload = JSON.stringify({ type: 'pipeline:done', outcome, timestamp: new Date().toISOString() });
       for (const listener of pipelineRun.sseListeners) {
@@ -195,10 +283,11 @@ export function createServer(config: ServerConfig = {}) {
       }
     }).catch((err) => {
       pipelineRun.status = 'failed';
-      const message = err instanceof Error ? err.message : String(err);
-      pipelineRun.outcome = { status: 'fail', failureReason: message };
+      pipelineRun.outcome = { status: 'fail', failureReason: 'Pipeline execution failed' };
+      completedRunCount++;
+      evictCompletedRuns();
 
-      const errPayload = JSON.stringify({ type: 'pipeline:error', error: message, timestamp: new Date().toISOString() });
+      const errPayload = JSON.stringify({ type: 'pipeline:error', error: 'Pipeline execution failed', timestamp: new Date().toISOString() });
       for (const listener of pipelineRun.sseListeners) {
         listener(errPayload);
       }
@@ -206,7 +295,8 @@ export function createServer(config: ServerConfig = {}) {
   }
 
   async function handleValidate(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const body = await readBody(req);
+    if (!checkAuth(req, res)) return;
+    const body = await readBody(req, maxBodySize);
     let parsed: { dot?: string };
     try {
       parsed = JSON.parse(body);
@@ -236,7 +326,8 @@ export function createServer(config: ServerConfig = {}) {
   }
 
   async function handleGenerate(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const body = await readBody(req);
+    if (!checkAuth(req, res)) return;
+    const body = await readBody(req, maxBodySize);
     let parsed: { description?: string; model?: string };
     try {
       parsed = JSON.parse(body);
@@ -262,7 +353,8 @@ export function createServer(config: ServerConfig = {}) {
     }
   }
 
-  function handleGetPipeline(res: ServerResponse, id: string): void {
+  function handleGetPipeline(req: IncomingMessage, res: ServerResponse, id: string): void {
+    if (!checkAuth(req, res)) return;
     const pipelineRun = runs.get(id);
     if (!pipelineRun) {
       json(res, 404, { error: `Pipeline run not found: ${id}` });
@@ -278,19 +370,28 @@ export function createServer(config: ServerConfig = {}) {
     });
   }
 
-  function handleSSE(res: ServerResponse, id: string): void {
+  function handleSSE(req: IncomingMessage, res: ServerResponse, id: string): void {
+    if (!checkAuth(req, res)) return;
     const pipelineRun = runs.get(id);
     if (!pipelineRun) {
       json(res, 404, { error: `Pipeline run not found: ${id}` });
       return;
     }
 
-    res.writeHead(200, {
+    const sseHeaders: Record<string, string> = {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
       'Connection': 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
-    });
+    };
+    if (allowedOrigins.includes('*')) {
+      sseHeaders['Access-Control-Allow-Origin'] = '*';
+    } else {
+      const origin = req.headers['origin'];
+      if (origin && allowedOrigins.includes(origin)) {
+        sseHeaders['Access-Control-Allow-Origin'] = origin;
+      }
+    }
+    res.writeHead(200, sseHeaders);
 
     // Send existing events as replay
     for (const event of pipelineRun.events) {
@@ -310,6 +411,8 @@ export function createServer(config: ServerConfig = {}) {
   }
 
   async function handleAnswer(req: IncomingMessage, res: ServerResponse, id: string): Promise<void> {
+    if (!checkAuth(req, res)) return;
+
     const pipelineRun = runs.get(id);
     if (!pipelineRun) {
       json(res, 404, { error: `Pipeline run not found: ${id}` });
@@ -321,7 +424,7 @@ export function createServer(config: ServerConfig = {}) {
       return;
     }
 
-    const body = await readBody(req);
+    const body = await readBody(req, maxBodySize);
     let parsed: { value?: string; text?: string };
     try {
       parsed = JSON.parse(body);
@@ -346,7 +449,9 @@ export function createServer(config: ServerConfig = {}) {
     json(res, 200, { ok: true });
   }
 
-  function handleAbort(res: ServerResponse, id: string): void {
+  function handleAbort(req: IncomingMessage, res: ServerResponse, id: string): void {
+    if (!checkAuth(req, res)) return;
+
     const pipelineRun = runs.get(id);
     if (!pipelineRun) {
       json(res, 404, { error: `Pipeline run not found: ${id}` });
@@ -382,15 +487,17 @@ export function createServer(config: ServerConfig = {}) {
     const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
     const path = url.pathname;
 
+    const origin = req.headers['origin'];
+
     // CORS preflight
     if (method === 'OPTIONS') {
-      setCorsHeaders(res);
+      setCorsHeaders(res, allowedOrigins, origin);
       res.writeHead(204);
       res.end();
       return;
     }
 
-    setCorsHeaders(res);
+    setCorsHeaders(res, allowedOrigins, origin);
 
     try {
       // Health
@@ -420,7 +527,7 @@ export function createServer(config: ServerConfig = {}) {
       // GET /api/v1/pipelines/:id/events
       let match = matchRoute('/api/v1/pipelines/:id/events', path);
       if (method === 'GET' && match) {
-        handleSSE(res, match.params.id);
+        handleSSE(req, res, match.params.id);
         return;
       }
 
@@ -434,14 +541,14 @@ export function createServer(config: ServerConfig = {}) {
       // DELETE /api/v1/pipelines/:id
       match = matchRoute('/api/v1/pipelines/:id', path);
       if (method === 'DELETE' && match) {
-        handleAbort(res, match.params.id);
+        handleAbort(req, res, match.params.id);
         return;
       }
 
       // GET /api/v1/pipelines/:id
       match = matchRoute('/api/v1/pipelines/:id', path);
       if (method === 'GET' && match) {
-        handleGetPipeline(res, match.params.id);
+        handleGetPipeline(req, res, match.params.id);
         return;
       }
 

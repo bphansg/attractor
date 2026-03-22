@@ -1,5 +1,19 @@
 import { mkdir, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+
+/** Sanitize a name to prevent path traversal. Only allows alphanumeric, underscore, hyphen, and dot. */
+function sanitizeName(name: string): string {
+  return name.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+}
+
+/** Verify that a resolved path is contained within the expected base directory. */
+function assertContainedIn(resolvedPath: string, baseDir: string): void {
+  const normalizedBase = resolve(baseDir);
+  const normalizedPath = resolve(resolvedPath);
+  if (!normalizedPath.startsWith(normalizedBase + '/') && normalizedPath !== normalizedBase) {
+    throw new Error(`Path traversal detected: ${resolvedPath} is outside ${baseDir}`);
+  }
+}
 
 /**
  * Ensure the top-level run directory exists.
@@ -16,7 +30,9 @@ export async function ensureStageDirectory(
   logsRoot: string,
   nodeId: string,
 ): Promise<string> {
-  const stageDir = join(logsRoot, nodeId);
+  const safeId = sanitizeName(nodeId);
+  const stageDir = join(logsRoot, safeId);
+  assertContainedIn(stageDir, logsRoot);
   await mkdir(stageDir, { recursive: true });
   return stageDir;
 }
@@ -29,7 +45,10 @@ export async function writeStageFile(
   filename: string,
   content: string,
 ): Promise<void> {
-  await writeFile(join(stageDir, filename), content, 'utf-8');
+  const safeFilename = sanitizeName(filename);
+  const filePath = join(stageDir, safeFilename);
+  assertContainedIn(filePath, stageDir);
+  await writeFile(filePath, content, 'utf-8');
 }
 
 /**
