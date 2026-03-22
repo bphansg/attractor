@@ -16,7 +16,7 @@ Commands:
   run <file.dot> [options]    Run a pipeline from a DOT file
   validate <file.dot>         Validate a DOT file without running
   generate "<description>"    Generate a .dot pipeline from a natural language description
-  serve [options]              Start HTTP server (coming soon)
+  serve [options]              Start HTTP server
 
 Run options:
   --logs-dir <dir>            Directory for run logs (default: ./attractor-logs/<timestamp>)
@@ -27,6 +27,9 @@ Run options:
 Generate options:
   --output <file>             Write generated DOT to a file instead of stdout
   --model <model>             LLM model to use for generation
+
+Serve options:
+  --port <port>               Server port (default: 3000)
 
 Examples:
   attractor run pipeline.dot

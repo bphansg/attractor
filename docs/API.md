@@ -692,6 +692,7 @@ Built-in implementations:
 | `CallbackInterviewer` | Custom callback function |
 | `QueueInterviewer` | Pre-loaded answer queue |
 | `RecordingInterviewer` | Records answers for replay |
+| `HttpInterviewer` | HTTP server (waits for POST /answer) |
 
 ---
 
@@ -742,6 +743,73 @@ Properties: `llm_model`, `llm_provider`, `reasoning_effort`
 
 ---
 
+### HTTP Server
+
+Run Attractor as a REST API server.
+
+#### `createServer(config?): { start(), stop(), runs }`
+
+```typescript
+import { createServer } from '@attractor/engine';
+
+const server = createServer({ port: 3000, host: '0.0.0.0' });
+await server.start();
+// ... later
+await server.stop();
+```
+
+**ServerConfig:**
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `port` | `number` | `3000` | Server port |
+| `host` | `string` | `'0.0.0.0'` | Bind address |
+| `logsRoot` | `string` | OS temp dir | Root directory for run logs |
+
+#### Endpoints
+
+| Method | Path | Body | Description |
+|--------|------|------|-------------|
+| `POST` | `/api/v1/pipelines/run` | `{ dot, autoApprove? }` | Start pipeline, returns `{ id, status }` |
+| `POST` | `/api/v1/pipelines/validate` | `{ dot }` | Validate DOT, returns `{ valid, diagnostics }` |
+| `POST` | `/api/v1/pipelines/generate` | `{ description, model? }` | Generate DOT from text, returns `{ dot, diagnostics }` |
+| `GET` | `/api/v1/pipelines/:id` | — | Get run status, events, outcome, pendingQuestion |
+| `GET` | `/api/v1/pipelines/:id/events` | — | SSE stream (replays past events, then live) |
+| `POST` | `/api/v1/pipelines/:id/answer` | `{ value, text? }` | Answer a human gate question |
+| `DELETE` | `/api/v1/pipelines/:id` | — | Abort a running pipeline |
+| `GET` | `/api/v1/health` | — | `{ status, version, activePipelines }` |
+
+#### SSE Events
+
+The `/events` endpoint streams these event types:
+
+| Type | When |
+|------|------|
+| `pipeline:start` | Pipeline begins |
+| `node:enter` | Node execution starts |
+| `node:exit` | Node execution ends |
+| `edge:traverse` | Edge is followed |
+| `retry` | Node is retried |
+| `question` | Human gate waiting for answer |
+| `inform` | Informational message |
+| `pipeline:done` | Pipeline completed |
+| `pipeline:error` | Pipeline failed |
+
+#### PipelineRun
+
+```typescript
+interface PipelineRun {
+  id: string;
+  status: 'pending' | 'running' | 'waiting_human' | 'completed' | 'failed' | 'aborted';
+  events: Array<Record<string, unknown>>;
+  outcome?: Record<string, unknown>;
+  pendingQuestion?: Question;
+  sseListeners: Set<(data: string) => void>;
+}
+```
+
+---
+
 ## @attractor/cli
 
 Command-line interface for running Attractor pipelines.
@@ -758,8 +826,8 @@ attractor validate <file.dot>
 # Generate a pipeline from natural language
 attractor generate "<description>" [--output file.dot] [--model model-name]
 
-# Start HTTP server (coming soon)
-attractor serve [options]
+# Start HTTP server
+attractor serve [--port 3000]
 ```
 
 ### Run Options
@@ -777,3 +845,9 @@ attractor serve [options]
 |------|-------------|
 | `--output <file>` | Write generated DOT to a file (default: stdout) |
 | `--model <model>` | LLM model to use for generation |
+
+### Serve Options
+
+| Flag | Description |
+|------|-------------|
+| `--port <port>` | Server port (default: `3000`) |

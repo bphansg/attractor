@@ -247,6 +247,64 @@ attractor generate "Run tests, fix any failures, then generate a report"
 attractor generate "Build the project, run tests, get human approval, then deploy" --output deploy.dot
 ```
 
+## REST API / HTTP Server
+
+Run Attractor as an HTTP server to trigger and monitor pipelines from any client:
+
+```bash
+# Start the server
+attractor serve --port 3000
+```
+
+### Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/v1/pipelines/run` | Start a pipeline from DOT source |
+| `POST` | `/api/v1/pipelines/validate` | Validate DOT without running |
+| `POST` | `/api/v1/pipelines/generate` | Generate DOT from natural language |
+| `GET` | `/api/v1/pipelines/:id` | Get pipeline run status |
+| `GET` | `/api/v1/pipelines/:id/events` | SSE stream of live events |
+| `POST` | `/api/v1/pipelines/:id/answer` | Respond to a human gate question |
+| `DELETE` | `/api/v1/pipelines/:id` | Abort a running pipeline |
+| `GET` | `/api/v1/health` | Health check |
+
+### Example: Run a pipeline via API
+
+```bash
+# Start a pipeline
+curl -X POST http://localhost:3000/api/v1/pipelines/run \
+  -H "Content-Type: application/json" \
+  -d '{"dot": "digraph { goal=\"Test\" start [shape=Mdiamond] greet [prompt=\"Say hi\"] done [shape=Msquare] start -> greet -> done }", "autoApprove": true}'
+
+# Check status
+curl http://localhost:3000/api/v1/pipelines/<id>
+
+# Stream live events (SSE)
+curl http://localhost:3000/api/v1/pipelines/<id>/events
+```
+
+### Human Gates over HTTP
+
+When a pipeline hits a human approval gate, it pauses and emits a `question` event via SSE. Answer it with:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/pipelines/<id>/answer \
+  -H "Content-Type: application/json" \
+  -d '{"value": "approved", "text": "Looks good"}'
+```
+
+This lets you build web UIs, Slack bots, or CI integrations that interact with human gates.
+
+You can also use the server programmatically:
+
+```typescript
+import { createServer } from '@attractor/engine';
+
+const server = createServer({ port: 3000 });
+await server.start();
+```
+
 ## What Happens When You Run a Pipeline
 
 Attractor creates a log directory for each run with everything that happened:
