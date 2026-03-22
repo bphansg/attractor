@@ -52,6 +52,36 @@ export ANTHROPIC_API_KEY=sk-ant-...   # or OPENAI_API_KEY or GEMINI_API_KEY
 node packages/cli/dist/index.js run examples/simple.dot
 ```
 
+## Generate Pipelines from Plain English
+
+Don't want to write DOT by hand? Just describe what you want in natural language and Attractor will generate the pipeline for you:
+
+```bash
+# Describe your workflow in plain English
+attractor generate "Run the test suite, and if anything fails, fix the code and re-run until everything passes"
+
+# Save the generated pipeline to a file
+attractor generate "Draft a blog post, get human approval, then publish" --output blog.dot
+
+# Then run it
+attractor run blog.dot
+```
+
+Attractor sends your description to an AI, generates a valid `.dot` file, and even validates it automatically — retrying once if the first attempt has errors.
+
+You can also use this programmatically:
+
+```typescript
+import { generateDot } from '@attractor/engine';
+
+const result = await generateDot({
+  description: 'Build the project, run tests, deploy to staging',
+});
+
+console.log(result.dot);          // The generated DOT pipeline
+console.log(result.diagnostics);  // Any validation warnings
+```
+
 ## What Can You Put in a Pipeline?
 
 ### AI Tasks (the default)
@@ -209,6 +239,12 @@ attractor run pipeline.dot --logs-dir ./my-logs
 
 # Use a specific model/provider
 attractor run pipeline.dot --model claude-sonnet-4-20250514 --provider anthropic
+
+# Generate a pipeline from a natural language description
+attractor generate "Run tests, fix any failures, then generate a report"
+
+# Generate and save to a file
+attractor generate "Build the project, run tests, get human approval, then deploy" --output deploy.dot
 ```
 
 ## What Happens When You Run a Pipeline

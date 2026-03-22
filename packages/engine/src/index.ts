@@ -11,3 +11,4 @@ export * from './conditions/index.js';
 export * from './transforms/index.js';
 export * from './events.js';
 export * from './run-dir.js';
+export * from './generate/index.js';

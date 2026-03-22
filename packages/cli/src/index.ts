@@ -1,6 +1,7 @@
 import { runCommand } from './commands/run.js';
 import { validateCommand } from './commands/validate.js';
 import { serveCommand } from './commands/serve.js';
+import { generateCommand } from './commands/generate.js';
 
 const VERSION = '0.1.0';
 
@@ -14,6 +15,7 @@ Usage:
 Commands:
   run <file.dot> [options]    Run a pipeline from a DOT file
   validate <file.dot>         Validate a DOT file without running
+  generate "<description>"    Generate a .dot pipeline from a natural language description
   serve [options]              Start HTTP server (coming soon)
 
 Run options:
@@ -22,10 +24,16 @@ Run options:
   --model <model>             LLM model to use (e.g. claude-sonnet-4-20250514)
   --provider <provider>       LLM provider (anthropic, openai, google)
 
+Generate options:
+  --output <file>             Write generated DOT to a file instead of stdout
+  --model <model>             LLM model to use for generation
+
 Examples:
   attractor run pipeline.dot
   attractor run pipeline.dot --auto-approve --logs-dir ./logs
   attractor validate pipeline.dot
+  attractor generate "Run tests, fix failures, then report results"
+  attractor generate "Build and deploy with human approval" --output deploy.dot
 `);
 }
 
@@ -38,6 +46,9 @@ async function main(): Promise<void> {
       break;
     case 'validate':
       await validateCommand(args);
+      break;
+    case 'generate':
+      await generateCommand(args);
       break;
     case 'serve':
       await serveCommand(args);
