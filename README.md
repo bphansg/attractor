@@ -496,6 +496,10 @@ No API key? No problem. Attractor runs in **echo mode** by default — it goes t
 - Node.js >= 20
 - pnpm >= 9
 
+## CI / Agent-Config Scan
+
+This repository's GitHub Actions CI runs [Agent Hook Scan](https://github.com/bphansg/agent-hook-scan) on Cursor, Claude, and MCP agent configuration files. The scanner checks for risky patterns like `curl | sh` in shell hooks or unpinned GitHub Actions, and fails the build when high-severity issues are detected.
+
 ## License
 
 Apache-2.0
