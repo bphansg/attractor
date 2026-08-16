@@ -58,3 +58,14 @@ jobs:
 
       - name: Type check all packages
         run: pnpm -r exec tsc --noEmit
+
+  agent-hook-scan:
+    name: Agent Hook Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: bphansg/agent-hook-scan@main
+        with:
+          fail-on: high
