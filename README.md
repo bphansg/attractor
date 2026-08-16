@@ -52,6 +52,28 @@ export ANTHROPIC_API_KEY=sk-ant-...   # or OPENAI_API_KEY or GEMINI_API_KEY
 node packages/cli/dist/index.js run examples/simple.dot
 ```
 
+## Try This in 5 Minutes (No API Key Required)
+
+Want to see Attractor in action without setting up any API keys? Here's how:
+
+```bash
+# 1. Clone and build (one time setup)
+git clone https://github.com/bphansg/attractor.git
+cd attractor
+pnpm install && pnpm build
+
+# 2. Run a simple linear workflow in echo mode
+node packages/cli/dist/index.js run examples/simple.dot --auto-approve
+
+# 3. Try a workflow with human approval gates
+node packages/cli/dist/index.js run examples/review.dot --auto-approve
+```
+
+**Echo mode** simulates AI responses without calling any real APIs. The `--auto-approve` flag automatically approves human gates (hexagon nodes), so you can see complete workflows run end-to-end instantly — including approval gates and feedback loops.
+
+Try the other examples too:
+- `examples/branching.dot` — Conditional branching based on test outcomes
+
 ## Generate Pipelines from Plain English
 
 Don't want to write DOT by hand? Just describe what you want in natural language and Attractor will generate the pipeline for you:
@@ -143,6 +165,14 @@ digraph review {
 ```
 
 When the pipeline hits `review_gate`, it shows you the options in your terminal. You pick one, and it routes accordingly. Use `--auto-approve` to skip these gates in CI/automation.
+
+#### Why Human Gates Matter
+
+Human approval gates follow a key principle from [Google's Beyond Zero security model](https://arxiv.org/html/2605.22985): critical decisions should require human verification, even in automated systems. Rather than granting agents unrestricted access, you place explicit checkpoints where humans review and authorize high-risk actions before they execute.
+
+This is especially important for AI agents that can modify code, access production systems, or make irreversible changes. A hexagon gate lets you inspect the agent's plan, check for security issues, and approve or reject before the workflow continues. See Google's [Beyond Zero blog post](https://blog.google/security/going-beyond-zero-a-new-paradigm-for-enterprise-security/) for more on this approach.
+
+_Note: Attractor is a workflow tool and does not claim to implement the full Beyond Zero framework._
 
 ### Automatic Retries
 

@@ -23,7 +23,7 @@ function getPort() {
   return port++;
 }
 
-async function fetchJSON(url: string, options?: RequestInit) {
+async function fetchJSON(url: string, options?: RequestInit): Promise<{ status: number; body: any }> {
   const res = await fetch(url, options);
   const body = await res.json();
   return { status: res.status, body };
