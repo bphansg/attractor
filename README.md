@@ -62,18 +62,16 @@ git clone https://github.com/bphansg/attractor.git
 cd attractor
 pnpm install && pnpm build
 
-# 2. Run a pipeline with human approval gates in echo mode
-node packages/cli/dist/index.js run examples/secure-pr-review.dot --auto-approve
+# 2. Run a simple linear workflow in echo mode
+node packages/cli/dist/index.js run examples/simple.dot --auto-approve
 
-# 3. Watch it execute a complete workflow:
-#    plan → implement → test → security review gate → merge
+# 3. Try a workflow with human approval gates
+node packages/cli/dist/index.js run examples/review.dot --auto-approve
 ```
 
-**Echo mode** simulates AI responses without calling any real APIs. The `--auto-approve` flag automatically approves human gates (hexagon nodes), so you can see the entire workflow run end-to-end instantly.
+**Echo mode** simulates AI responses without calling any real APIs. The `--auto-approve` flag automatically approves human gates (hexagon nodes), so you can see complete workflows run end-to-end instantly — including approval gates and feedback loops.
 
-Try these other examples too:
-- `examples/simple.dot` — Basic linear workflow
-- `examples/review.dot` — Human approval gates with feedback loops  
+Try the other examples too:
 - `examples/branching.dot` — Conditional branching based on test outcomes
 
 ## Generate Pipelines from Plain English
